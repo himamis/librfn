@@ -10,23 +10,17 @@ Licensed under GPL, version 2 or a later (see LICENSE.txt)
 using std::printf;
 using std::max;
 
-//float* CPU_Operations::ones = 0;
-
 
 CPU_Operations::CPU_Operations(const int m, const int n, const int k,
                           unsigned long seed, int gpu_id) {
     srand(seed);
     int maxsize = max(max(n, m), k);
-    ones = malloc(maxsize*sizeof(float));
-    for (int i = 0; i < maxsize; ++i)
-        ones[i] = 1.0f;
 
     var_tmp = malloc(maxsize*sizeof(float));
 }
 
 
 CPU_Operations::~CPU_Operations() {
-    free(ones);
     free(var_tmp);
 }
 

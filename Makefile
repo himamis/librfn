@@ -48,17 +48,17 @@ NVCCFLAGS=--use_fast_math $(addprefix -Xcompiler , $(CXXFLAGS)) \
 
 
 
-SOURCES=librfn.cpp cpu_operations.cpp
-OBJECTS=librfn.o cpu_operations.o
+SOURCES=librfn.cpp cpu_operations.cpp gpu_common.cpp
+OBJECTS=$(SOURCES:.cpp=.o)
 
 ifeq ($(USEGPU),yes)
-	SOURCES+=gpu_operations.cu
-	OBJECTS+=gpu_operations.o
+	SOURCES+=gpu_operations.cu gpu_sparse_operations.cu
+	OBJECTS+=gpu_operations.o gpu_sparse_operations.o
 endif
 
 all: $(SOURCES) librfn.so
 
-test: gpu_operations.o cpu_operations.o tests/tests.o tests/test_runner.o
+test: gpu_common.o gpu_sparse_operations.o gpu_operations.o cpu_operations.o tests/tests.o tests/test_runner.o
 	g++ $(LDFLAGS) $^ -o $@ $(LIBS)
 	./test
 
@@ -70,6 +70,10 @@ librfn.so: $(OBJECTS)
 
 gpu_operations.o: gpu_operations.cu
 	$(NVCC) $(NVCCFLAGS) -o $@ -c $<
+
+gpu_sparse_operations.o: gpu_sparse_operations.cu
+	$(NVCC) $(NVCCFLAGS) -o $@ -c $<
+
 
 clean:
 	rm -rf *.o librfn.so tests/*.o
