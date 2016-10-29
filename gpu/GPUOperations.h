@@ -20,14 +20,14 @@ public:
 	virtual void add_saltpepper_noise(MatrixType X, const unsigned size, const float noise_rate) const = 0;
 	virtual void add_gauss_noise(MatrixType X, const unsigned size, const float noise_rate) const = 0;
 
-	void fill_eye(float* X, unsigned n) const = 0;
-	void maximum(float* x, const float value, const unsigned size) const = 0;
-	void leaky_relu(float* x, const float value, const unsigned size) const = 0;
-	void tanh(float* x, const unsigned size) const = 0;
-	void sigmoid(float* x, const unsigned size) const = 0;
-	void soft_threshold(float* x, const float alpha, const unsigned size) const = 0;
-	void invsqrt(float* s, const unsigned n) const = 0;
-	void invert(float* X, const unsigned size) const = 0;
+	void fill_eye(float* X, unsigned n) const;
+	void maximum(float* x, const float value, const unsigned size) const;
+	void leaky_relu(float* x, const float value, const unsigned size) const;
+	void tanh(float* x, const unsigned size) const;
+	void sigmoid(float* x, const unsigned size) const;
+	void soft_threshold(float* x, const float alpha, const unsigned size) const;
+	void invsqrt(float* s, const unsigned n) const;
+	void invert(float* X, const unsigned size) const;
 
 	void fill(float * x, const unsigned size, const float value) const;
 	void* memset(void* dest, int ch, size_t count) const;
