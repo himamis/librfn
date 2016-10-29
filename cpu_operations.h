@@ -58,6 +58,7 @@ class CPU_Operations{
 float* var_tmp;
 
 public:
+float* ones;
 
 CPU_Operations(const int m, const int n, const int k, unsigned long seed, int gpu_id);
 ~CPU_Operations();
