@@ -5,26 +5,16 @@
 #ifndef GPU_DENSE_OPERATIONS_H
 #define GPU_DENSE_OPERATIONS_H
 
-#include <cstring>
-#include <ctype.h>
-#include <cassert>
-#include <map>
+//#include <cstring>
+//#include <ctype.h>
+//#include <cassert>
 
 #include "GPUCommon.h"
 #include "GPUOperations.h"
 
-inline cublasFillMode_t uplo_to_cublas(const char* uplo) {
-	return tolower(uplo[0]) == 'l' ? CUBLAS_FILL_MODE_LOWER : CUBLAS_FILL_MODE_UPPER;
-}
-
 class GPUDenseOperations: public GPUOperations<float*> {
 
-	curandState* rng_state;
-	int* devinfo; // cuSOLVER error reporting
-
 public:
-
-	float* ones;
 
 	GPUDenseOperations(int n, int m, int k, unsigned long seed, int gpu_id);
 	~GPUDenseOperations();
@@ -41,7 +31,6 @@ public:
 		CUDA_CALL(cudaMemcpy(dst, src, size, cudaMemcpyDeviceToHost));
 		return dst;
 	}
-
 
 	void fill_eye(float* X, unsigned n) const;
 	void maximum(float* x, const float value, const unsigned size) const;

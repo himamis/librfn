@@ -2,7 +2,14 @@
 #include "GPUCommonKernels.h"
 
 template<typename MatrixType>
-GPUOperations<MatrixType>::GPUOperations() {
+GPUOperations<MatrixType>::GPUOperations(const int n, const int m, const int k, unsigned long seed, int gpu_id) {
+	// if no GPU was specified, try to pick the best one automatically
+	if (gpu_id < 0) {
+		gpu_id = get_gpu_id();
+	}
+	assert(gpu_id >= 0);
+	cudaSetDevice (gpu_id);
+
 	cublasStatus_t status = cublasCreate(&handle);
 	if (status != CUBLAS_STATUS_SUCCESS) {
 		const char* errmsg = cublasErrorString(status);
@@ -11,13 +18,23 @@ GPUOperations<MatrixType>::GPUOperations() {
 		throw std::runtime_error(errmsg);
 	}
 	CUSOLVER_CALL(cusolverDnCreate(&cudense_handle));
+	CUDA_CALL(cudaMalloc(&devinfo, sizeof(int)));
+	CUDA_CALL(cudaMalloc(&rng_state, RNG_BLOCKS * RNG_THREADS * sizeof(curandState)));
+	setup_rng<<<RNG_BLOCKS, RNG_THREADS>>>(rng_state, seed);
+	int ones_size = n > k ? n : k;
+	ones = malloc(ones_size * sizeof(float));
+	fill(ones, ones_size, 1.0f);
 }
 
 template<typename MatrixType>
 GPUOperations<MatrixType>::~GPUOperations() {
+	free(devinfo);
+
 	for (auto i : buffer_map) {
 		free(i.second);
 	}
+	CUSOLVER_CALL(cusolverDnDestroy(cudense_handle));
+	CUBLAS_CALL(cublasDestroy(handle));
 }
 
 template<typename MatrixType>

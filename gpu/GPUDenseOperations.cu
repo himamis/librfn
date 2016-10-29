@@ -6,15 +6,8 @@
 #include "GPUDenseOperations.h"
 #include "GPUDenseKernels.h"
 
-GPUDenseOperations::GPUDenseOperations(const int n, const int m, const int k, unsigned long seed, int gpu_id) {
-
-	// if no GPU was specified, try to pick the best one automatically
-	if (gpu_id < 0) {
-		gpu_id = get_gpu_id();
-	}
-	assert(gpu_id >= 0);
-	cudaSetDevice(gpu_id);
-
+GPUDenseOperations::GPUDenseOperations(const int n, const int m, const int k, unsigned long seed, int gpu_id) :
+		GPUOperations(n, m, k, seed, gpu_id) {
 	// the following call does not work if the current process has already
 	// called into librfn previously. Then, this call will return
 	// cudaErrorSetOnActiveProcess. Resetting the device won't work either,
@@ -22,21 +15,10 @@ GPUDenseOperations::GPUDenseOperations(const int n, const int m, const int k, un
 	// CUBLAS_STATUS_NOT_INITIALIZED. I don't know why any of this is happening
 	//CUDA_CALL(cudaSetDeviceFlags(cudaDeviceScheduleYield));
 
-
-	CUSOLVER_CALL(cusolverDnCreate(&cudense_handle));
-	CUDA_CALL(cudaMalloc(&rng_state, RNG_BLOCKS * RNG_THREADS * sizeof(curandState)));
-	setup_rng<<<RNG_BLOCKS, RNG_THREADS>>>(rng_state, seed);
-	int ones_size = n > k ? n : k;
-	ones = malloc(ones_size * sizeof(float));
-	fill(ones, ones_size, 1.0f);
-	CUDA_CALL(cudaMalloc(&devinfo, sizeof(int)));
 }
 
 GPUDenseOperations::~GPUDenseOperations() {
-	free(devinfo);
 	free(ones);
-	CUSOLVER_CALL(cusolverDnDestroy(cudense_handle));
-	CUBLAS_CALL(cublasDestroy(handle));
 }
 
 float* GPUDenseOperations::to_device(const float* src, size_t size) const {

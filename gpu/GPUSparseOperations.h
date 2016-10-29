@@ -7,13 +7,8 @@
 class GPUSparseOperations: public GPUOperations<cusparseMatDescr_t> {
 
 	cusparseHandle_t sparseHandle;
-	cusolverSpHandle_t solverHandle;
-	curandState* rngState;
-
-	int* devinfo; // cuSOLVER error reporting
 
 public:
-	//float* ones;
 
 	GPUSparseOperations(int n, int m, int k, unsigned long seed, int gpu_id);
 	~GPUSparseOperations();

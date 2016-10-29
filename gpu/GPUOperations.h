@@ -2,6 +2,11 @@
 #define GPU_OPERATIONS_H
 
 #include "GPUCommon.h"
+#include <map>
+
+inline cublasFillMode_t uplo_to_cublas(const char* uplo) {
+	return tolower(uplo[0]) == 'l' ? CUBLAS_FILL_MODE_LOWER : CUBLAS_FILL_MODE_UPPER;
+}
 
 template<typename MatrixType>
 class GPUOperations {
@@ -9,11 +14,15 @@ class GPUOperations {
 	cublasHandle_t handle;
 	cusolverDnHandle_t cudense_handle;
 
+
 	std::map<int, float*> buffer_map; // keeps track of buffers allocated for potrf
+	int* devinfo; // cuSOLVER error reporting
 
 public:
+	curandState* rng_state;
+	float* ones;
 
-	GPUOperations();
+	GPUOperations(const int n, const int m, const int k, unsigned long seed, int gpu_id);
 	virtual ~GPUOperations() = 0;
 
 	virtual void calculate_column_variance(MatrixType X, const unsigned nrows, const unsigned ncols,
