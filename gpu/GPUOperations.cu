@@ -142,5 +142,6 @@ void GPUOperations<MatrixType>::invsqrt(float* s, const unsigned n) const {
 	invsqrt_eltw<<<t, b>>>(s, n);
 }
 
-// force compiler to create this file
+// force compiler to create related class
 template class GPUOperations<float*>;
+template class GPUOperations<cusparseMatDescr_t>;
