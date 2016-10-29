@@ -6,46 +6,16 @@ Licensed under GPL, version 2 or a later (see LICENSE.txt)
 #include <cuda_runtime.h>
 #include <cublas_v2.h>
 #include <curand_kernel.h>
-#include <stdexcept>
 
 #include "gpu_operations.h"
-#include "gpu_common.h"
 
 static const int RNG_THREADS = 128;
 static const int RNG_BLOCKS = 128;
-/*
-cublasHandle_t GPU_Operations::handle;
-float* GPU_Operations::ones = 0;
-curandState* GPU_Operations::rng_state = 0;
-cudaStream_t* GPU_Operations::streams = 0;
-*/
-
-// taken from PyCUDA
-void get_grid_sizes(int problemsize, int* blocks, int* threads) {
-    int min_threads = 32;
-    int max_threads = 256;
-    int max_blocks = 384;
-
-    if (problemsize < min_threads) {
-        *blocks = 1;
-        *threads = min_threads;
-    } else if (problemsize < max_blocks * min_threads) {
-        *blocks = (problemsize + min_threads - 1) / min_threads;
-        *threads = min_threads;
-    } else if (problemsize < max_blocks * max_threads) {
-        *blocks = max_blocks;
-        int grp = (problemsize + min_threads - 1) / min_threads;
-        *threads = ((grp + max_blocks - 1) / max_blocks) * min_threads;
-    } else {
-        *blocks = max_blocks;
-        *threads = max_threads;
-    }
-}
 
 
 __global__ void setup_rng(curandState* rng_state, unsigned long seed)
 {
-    const int tid = blockIdx.x*blockDim.x+threadIdx.x;
+    const int tid = blockIdx.x * blockDim.x + threadIdx.x;
     curand_init(seed, tid, 0, &rng_state[tid]);
 }
 
