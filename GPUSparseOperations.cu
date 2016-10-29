@@ -1,14 +1,4 @@
-#include "gpu_sparse_operations.h"
-
-static const int RNG_THREADS = 128;
-static const int RNG_BLOCKS = 128;
-
-
-__global__ void setup_rng(curandState* rng_state, unsigned long seed)
-{
-    const int tid = blockIdx.x * blockDim.x + threadIdx.x;
-    curand_init(seed, tid, 0, &rng_state[tid]);
-}
+#include "GPUSparseOperations.h"
 
 
 GPU_SparseOperations::GPU_SparseOperations(const int n, const int m,

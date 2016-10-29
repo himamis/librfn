@@ -52,13 +52,13 @@ SOURCES=librfn.cpp cpu_operations.cpp gpu_common.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
 
 ifeq ($(USEGPU),yes)
-	SOURCES+=gpu_operations.cu gpu_sparse_operations.cu
-	OBJECTS+=gpu_operations.o gpu_sparse_operations.o
+	SOURCES+=GPUDenseOperations.cu GPUSparseOperations.cu GPUOperations.cu
+	OBJECTS+=GPUDenseOperations.o GPUSparseOperations.o GPUOperations.o
 endif
 
 all: $(SOURCES) librfn.so
 
-test: gpu_common.o gpu_sparse_operations.o gpu_operations.o cpu_operations.o tests/tests.o tests/test_runner.o
+test: gpu_common.o GPUOperations.o GPUSparseOperations.o GPUDenseOperations.o cpu_operations.o tests/tests.o tests/test_runner.o
 	g++ $(LDFLAGS) $^ -o $@ $(LIBS)
 	./test
 
@@ -68,12 +68,14 @@ testbin: librfn.so tests/testbin.o
 librfn.so: $(OBJECTS)
 	$(CXX) $(LDFLAGS) $^ -o $@ $(LIBS) -shared
 
-gpu_operations.o: gpu_operations.cu
+GPUDenseOperations.o: GPUDenseOperations.cu
 	$(NVCC) $(NVCCFLAGS) -o $@ -c $<
 
-gpu_sparse_operations.o: gpu_sparse_operations.cu
+GPUSparseOperations.o: GPUSparseOperations.cu
 	$(NVCC) $(NVCCFLAGS) -o $@ -c $<
 
+GPUOperations.o: GPUOperations.cu
+	$(NVCC) $(NVCCFLAGS) -o $@ -c $< 
 
 clean:
 	rm -rf *.o librfn.so tests/*.o
