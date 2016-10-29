@@ -16,18 +16,27 @@ GPUSparseOperations::~GPUSparseOperations() {
 	CUSPARSE_CALL(cusparseDestroy(sparseHandle));
 }
 
-void GPUSparseOperations::fill_eye(cusparseMatDescr_t, unsigned int n) const {
+void GPUSparseOperations::calculate_column_variance(cusparseMatDescr_t X, const unsigned nrows, const unsigned ncols,
+			float* variances) const {
 
 }
 
-void GPUSparseOperations::gemm(const char *transa, const char *transb, const int m, const int n, const int k,
-		const float alpha, const float *a, const int lda, const float *b, const int ldb, const float beta, float *c,
-		const int ldc) const {
-	//CUSPARSE_CALL(cusparseSgemmi())
+void GPUSparseOperations::scale_columns(cusparseMatDescr_t X, const unsigned nrows, const unsigned ncols, float* s) const {
 
 }
 
-void GPUSparseOperations::scale_rows(cusparseMatDescr_t, const unsigned nrows, const unsigned ncols, float* s) const {
-	int threads, blocks;
-	get_grid_sizes(ncols * nrows, &threads, &blocks);
+void GPUSparseOperations::scale_rows(cusparseMatDescr_t X, const unsigned nrows, const unsigned ncols, float* s) const {
+
+}
+
+void GPUSparseOperations::dropout(cusparseMatDescr_t X, const unsigned size, const float dropout_rate) const {
+
+}
+
+void GPUSparseOperations::add_saltpepper_noise(cusparseMatDescr_t X, const unsigned size, const float noise_rate) const {
+
+}
+
+void GPUSparseOperations::add_gauss_noise(cusparseMatDescr_t X, const unsigned size, const float noise_rate) const {
+
 }
