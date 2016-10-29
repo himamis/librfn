@@ -15,7 +15,7 @@ LIBS=-llapack -lblas
 
 GPUINC=-I/usr/local/cuda/include
 GPULIB=-L/usr/local/cuda/lib64
-GPUSO=-lcublas -lcurand -lcuda -lcudart -lcusolver
+GPUSO=-lcublas -lcurand -lcuda -lcudart -lcusolver -lcusparse
 
 
 ifeq ($(DEBUG), no)
@@ -48,17 +48,20 @@ NVCCFLAGS=--use_fast_math $(addprefix -Xcompiler , $(CXXFLAGS)) \
 
 
 
-SOURCES=librfn.cpp cpu_operations.cpp gpu_common.cpp
+SOURCES=librfn.cpp cpu_operations.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
 
+GPU_SOURCES=$(wildcard gpu/*.cu)
+GPU_OBJECTS=$(GPU_SOURCES:.cu=.o)
+
 ifeq ($(USEGPU),yes)
-	SOURCES+=GPUDenseOperations.cu GPUSparseOperations.cu GPUOperations.cu
-	OBJECTS+=GPUDenseOperations.o GPUSparseOperations.o GPUOperations.o
+	#SOURCES += $(GPU_SOURCES)
+	OBJECTS += $(GPU_OBJECTS)
 endif
 
-all: $(SOURCES) librfn.so
+all: $(SOURCES) $(GPU_SOURCES) librfn.so
 
-test: gpu_common.o GPUOperations.o GPUSparseOperations.o GPUDenseOperations.o cpu_operations.o tests/tests.o tests/test_runner.o
+test: gpu_common.o gpu/%.o cpu_operations.o tests/tests.o tests/test_runner.o
 	g++ $(LDFLAGS) $^ -o $@ $(LIBS)
 	./test
 
@@ -66,16 +69,13 @@ testbin: librfn.so tests/testbin.o
 	gcc tests/testbin.o -o testbin $(LIBPATH) $(LDFLAGS) -L./ -lrfn
 
 librfn.so: $(OBJECTS)
-	$(CXX) $(LDFLAGS) $^ -o $@ $(LIBS) -shared
+	$(CXX) $(LDFLAGS) $^ -o $@ -shared
 
-GPUDenseOperations.o: GPUDenseOperations.cu
+gpu/%.o: gpu/%.cu
 	$(NVCC) $(NVCCFLAGS) -o $@ -c $<
-
-GPUSparseOperations.o: GPUSparseOperations.cu
-	$(NVCC) $(NVCCFLAGS) -o $@ -c $<
-
-GPUOperations.o: GPUOperations.cu
-	$(NVCC) $(NVCCFLAGS) -o $@ -c $< 
 
 clean:
-	rm -rf *.o librfn.so tests/*.o
+	rm -rf *.o librfn.so tests/*.o gpu/*.o
+
+vars:
+	echo $(OBJECTS)

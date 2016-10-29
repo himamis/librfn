@@ -1,4 +1,4 @@
-#include "gpu_common.h"
+#include "GPUCommon.h"
 
 int get_gpu_id() {
 	int gpu_id, num_devices, device;

@@ -1,3 +1,6 @@
+#ifndef GPU_DENSE_KERNELS_H
+#define GPU_DENSE_KERNELS_H
+
 #include "GPUCommonKernels.h"
 
 __global__ void dropout_eltw(float* x, const unsigned size, const float dropout_rate, curandState* rng_state);
@@ -27,3 +30,5 @@ __global__ void invsqrt_eltw(float* x, const unsigned k);
 __global__ void scale_columns_kernel(float* X, float* a, const unsigned nrows, const unsigned ncols);
 
 __global__ void scale_rows_kernel(float* X, float* a, const unsigned nrows, const unsigned ncols);
+
+#endif /*GPU_DENSE_KERNELS_H*/

@@ -2,6 +2,9 @@
  Copyright © 2015 Thomas Unterthiner
  Licensed under GPL, version 2 or a later (see LICENSE.txt)
  */
+#ifndef GPU_DENSE_OPERATIONS_H
+#define GPU_DENSE_OPERATIONS_H
+
 #include <cstring>
 #include <ctype.h>
 #include <cassert>
@@ -123,3 +126,5 @@ public:
 	void printMatrixCM(const float* a, int n, int m, const char* fmt);
 	void printMatrixRM(const float* a, int n, int m, const char* fmt);
 };
+
+#endif /*GPU_DENSE_OPERATIONS_H*/

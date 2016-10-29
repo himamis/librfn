@@ -11,7 +11,7 @@ Licensed under GPL, version 2 or a later (see LICENSE.txt)
 #include "librfn.h"
 #include "cpu_operations.h"
 #ifndef NOGPU
-#include "gpu_operations.h"
+#include "gpu/GPUDenseOperations.h"
 #endif
 
 float time_diff(struct timeval *t2, struct timeval *t1) {
@@ -357,11 +357,11 @@ int train_gpu(const float* X_host, float* W_host, float* P_host, const int n,
               const int input_noise_type, const int activation_type, const int apply_scaling,
               const int applyNewtonUpdate, unsigned long seed, const int gpu_id) {
     if (k > m) {
-        return train<GPU_Operations, true>(X_host, W_host, P_host, n, m, k,
+        return train<GPUDenseOperations, true>(X_host, W_host, P_host, n, m, k,
                     n_iter, batch_size, etaW, etaP, minP, h_threshold, dropout_rate, input_noise_rate,
                     l2_weightdecay, l1_weightdecay, momentum, input_noise_type, activation_type, apply_scaling, applyNewtonUpdate, seed, gpu_id);
     } else {
-        return train<GPU_Operations, false>(X_host, W_host, P_host, n, m, k,
+        return train<GPUDenseOperations, false>(X_host, W_host, P_host, n, m, k,
                     n_iter, batch_size, etaW, etaP, minP, h_threshold, dropout_rate, input_noise_rate,
                     l2_weightdecay, l1_weightdecay, momentum, input_noise_type, activation_type, apply_scaling, applyNewtonUpdate, seed, gpu_id);
     }
@@ -378,7 +378,7 @@ void calculate_W_cpu(const float* X, const float* W, const float* P, float* Wout
 void calculate_W_gpu(const float* X, const float* W, const float* P, float* Wout,
                      const int n, const int m, const int k, const int activation_type,
                      const int  apply_scaling, const float h_threshold, int gpu_id) {
-    return calculate_W<GPU_Operations>(X, W, P, Wout, n, m, k, activation_type, apply_scaling, h_threshold, gpu_id);
+    return calculate_W<GPUDenseOperations>(X, W, P, Wout, n, m, k, activation_type, apply_scaling, h_threshold, gpu_id);
 }
 #endif
 }

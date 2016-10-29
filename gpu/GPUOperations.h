@@ -1,3 +1,6 @@
+#ifndef GPU_OPERATIONS_H
+#define GPU_OPERATIONS_H
+
 template<typename MatrixType>
 class GPUOperations {
 
@@ -28,3 +31,5 @@ public:
 	void free_devicememory(void* ptr) const;
 	float* malloc(size_t size) const;
 };
+
+#endif

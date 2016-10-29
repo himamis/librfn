@@ -1,6 +1,10 @@
-#include "GPUCommon.h"
+#ifndef GPU_SPARSE_OPERATIONS_H
+#define GPU_SPARSE_OPERATIONS_H
 
-class GPU_SparseOperations: public GPUOperations<cusparseMatDescr_t> {
+#include "GPUCommon.h"
+#include "GPUOperations.h"
+
+class GPUSparseOperations: public GPUOperations<cusparseMatDescr_t> {
 
 	cusparseHandle_t sparseHandle;
 	cusolverSpHandle_t solverHandle;
@@ -11,8 +15,8 @@ class GPU_SparseOperations: public GPUOperations<cusparseMatDescr_t> {
 public:
 	//float* ones;
 
-	GPU_SparseOperations(int n, int m, int k, unsigned long seed, int gpu_id);
-	~GPU_SparseOperations();
+	GPUSparseOperations(int n, int m, int k, unsigned long seed, int gpu_id);
+	~GPUSparseOperations();
 
 	void fill_eye(cusparseMatDescr_t, unsigned n) const;
 	void fill(cusparseMatDescr_t, const unsigned size, const float value) const;
@@ -33,3 +37,5 @@ public:
 	void invert(cusparseMatDescr_t, const unsigned size) const;
 
 };
+
+#endif
