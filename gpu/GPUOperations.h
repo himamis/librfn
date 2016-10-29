@@ -23,7 +23,7 @@ public:
 	float* ones;
 
 	GPUOperations(const int n, const int m, const int k, unsigned long seed, int gpu_id);
-	virtual ~GPUOperations() = 0;
+	virtual ~GPUOperations();
 
 	virtual void calculate_column_variance(MatrixType X, const unsigned nrows, const unsigned ncols,
 			float* variances) const = 0;

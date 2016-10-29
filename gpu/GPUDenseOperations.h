@@ -5,10 +5,6 @@
 #ifndef GPU_DENSE_OPERATIONS_H
 #define GPU_DENSE_OPERATIONS_H
 
-//#include <cstring>
-//#include <ctype.h>
-//#include <cassert>
-
 #include "GPUCommon.h"
 #include "GPUOperations.h"
 
@@ -17,7 +13,7 @@ class GPUDenseOperations: public GPUOperations<float*> {
 public:
 
 	GPUDenseOperations(int n, int m, int k, unsigned long seed, int gpu_id);
-	~GPUDenseOperations();
+	virtual ~GPUDenseOperations();
 
 	float* to_device(const float* src, size_t size) const;
 

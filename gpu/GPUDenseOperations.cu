@@ -7,19 +7,9 @@
 #include "GPUDenseKernels.h"
 
 GPUDenseOperations::GPUDenseOperations(const int n, const int m, const int k, unsigned long seed, int gpu_id) :
-		GPUOperations(n, m, k, seed, gpu_id) {
-	// the following call does not work if the current process has already
-	// called into librfn previously. Then, this call will return
-	// cudaErrorSetOnActiveProcess. Resetting the device won't work either,
-	// because then the subsequent cublasCreate call will just fail with
-	// CUBLAS_STATUS_NOT_INITIALIZED. I don't know why any of this is happening
-	//CUDA_CALL(cudaSetDeviceFlags(cudaDeviceScheduleYield));
+		GPUOperations(n, m, k, seed, gpu_id) { }
 
-}
-
-GPUDenseOperations::~GPUDenseOperations() {
-	free(ones);
-}
+GPUDenseOperations::~GPUDenseOperations() { }
 
 float* GPUDenseOperations::to_device(const float* src, size_t size) const {
 	float* dst = 0;

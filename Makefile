@@ -61,7 +61,7 @@ endif
 
 all: $(SOURCES) $(GPU_SOURCES) librfn.so
 
-test: gpu_common.o gpu/%.o cpu_operations.o tests/tests.o tests/test_runner.o
+test: $(GPU_OBJECTS) cpu_operations.o tests/tests.o tests/test_runner.o
 	g++ $(LDFLAGS) $^ -o $@ $(LIBS)
 	./test
 
