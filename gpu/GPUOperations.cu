@@ -2,6 +2,18 @@
 #include "GPUCommonKernels.h"
 
 template<typename MatrixType>
+GPUOperations<MatrixType>::GPUOperations() {
+	cublasStatus_t status = cublasCreate(&handle);
+	if (status != CUBLAS_STATUS_SUCCESS) {
+		const char* errmsg = cublasErrorString(status);
+		fprintf(stderr, "CUBLAS initialization error: %s\n", errmsg);
+		cudaDeviceReset();
+		throw std::runtime_error(errmsg);
+	}
+	CUSOLVER_CALL(cusolverDnCreate(&cudense_handle));
+}
+
+template<typename MatrixType>
 GPUOperations<MatrixType>::~GPUOperations() {
 	for (auto i : buffer_map) {
 		free(i.second);

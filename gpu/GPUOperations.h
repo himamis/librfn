@@ -6,10 +6,14 @@
 template<typename MatrixType>
 class GPUOperations {
 
+	cublasHandle_t handle;
+	cusolverDnHandle_t cudense_handle;
+
 	std::map<int, float*> buffer_map; // keeps track of buffers allocated for potrf
 
 public:
 
+	GPUOperations();
 	virtual ~GPUOperations() = 0;
 
 	virtual void calculate_column_variance(MatrixType X, const unsigned nrows, const unsigned ncols,

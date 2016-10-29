@@ -19,9 +19,7 @@ inline cublasFillMode_t uplo_to_cublas(const char* uplo) {
 
 class GPUDenseOperations: public GPUOperations<float*> {
 
-	cublasHandle_t handle;
 	curandState* rng_state;
-	cusolverDnHandle_t cudense_handle;
 	int* devinfo; // cuSOLVER error reporting
 
 public:

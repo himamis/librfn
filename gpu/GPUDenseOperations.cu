@@ -22,13 +22,7 @@ GPUDenseOperations::GPUDenseOperations(const int n, const int m, const int k, un
 	// CUBLAS_STATUS_NOT_INITIALIZED. I don't know why any of this is happening
 	//CUDA_CALL(cudaSetDeviceFlags(cudaDeviceScheduleYield));
 
-	cublasStatus_t status = cublasCreate(&handle);
-	if (status != CUBLAS_STATUS_SUCCESS) {
-		const char* errmsg = cublasErrorString(status);
-		fprintf(stderr, "CUBLAS initialization error: %s\n", errmsg);
-		cudaDeviceReset();
-		throw std::runtime_error(errmsg);
-	}
+
 	CUSOLVER_CALL(cusolverDnCreate(&cudense_handle));
 	CUDA_CALL(cudaMalloc(&rng_state, RNG_BLOCKS * RNG_THREADS * sizeof(curandState)));
 	setup_rng<<<RNG_BLOCKS, RNG_THREADS>>>(rng_state, seed);
