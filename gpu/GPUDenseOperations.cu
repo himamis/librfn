@@ -19,17 +19,17 @@ float* GPUDenseOperations::to_device(const float* src, size_t size) const {
 }
 
 void GPUDenseOperations::dropout(float* X, const unsigned size, const float dropout_rate) const {
-	dropout_eltw<<<RNG_BLOCKS, RNG_THREADS>>>(X, size, dropout_rate, rng_state);
+	dense_dropout_eltw<<<RNG_BLOCKS, RNG_THREADS>>>(X, size, dropout_rate, rng_state);
 	assert(!cudaGetLastError());
 }
 
 void GPUDenseOperations::add_gauss_noise(float* X, const unsigned size, const float noise_rate) const {
-	gauss_noise_eltw<<<RNG_BLOCKS, RNG_THREADS>>>(X, size, noise_rate, rng_state);
+	dense_gauss_noise_eltw<<<RNG_BLOCKS, RNG_THREADS>>>(X, size, noise_rate, rng_state);
 	assert(!cudaGetLastError());
 }
 
 void GPUDenseOperations::add_saltpepper_noise(float* X, const unsigned size, const float noise_rate) const {
-	saltpepper_noise_eltw<<<RNG_BLOCKS, RNG_THREADS>>>(X, size, noise_rate, rng_state);
+	dense_saltpepper_noise_eltw<<<RNG_BLOCKS, RNG_THREADS>>>(X, size, noise_rate, rng_state);
 	assert(!cudaGetLastError());
 }
 
@@ -37,20 +37,20 @@ void GPUDenseOperations::calculate_column_variance(float* X, const unsigned nrow
 		float* variance) const {
 	int threads, blocks;
 	get_grid_sizes(ncols, &threads, &blocks);
-	col_variance_kernel<<<threads, blocks>>>(X, variance, nrows, ncols);
+	dense_col_variance_kernel<<<threads, blocks>>>(X, variance, nrows, ncols);
 }
 
 void GPUDenseOperations::scale_columns(float* X, const unsigned nrows, const unsigned ncols, float* s) const {
 
 	int threads, blocks;
 	get_grid_sizes(ncols * nrows, &threads, &blocks);
-	scale_columns_kernel<<<threads, blocks>>>(X, s, nrows, ncols);
+	dense_scale_columns_kernel<<<threads, blocks>>>(X, s, nrows, ncols);
 }
 
 void GPUDenseOperations::scale_rows(float* X, const unsigned nrows, const unsigned ncols, float* s) const {
 	int threads, blocks;
 	get_grid_sizes(ncols * nrows, &threads, &blocks);
-	scale_rows_kernel<<<threads, blocks>>>(X, s, nrows, ncols);
+	dense_scale_rows_kernel<<<threads, blocks>>>(X, s, nrows, ncols);
 }
 
 void GPUDenseOperations::printMatrixRM(const float* a, int n, int m, const char* fmt) {

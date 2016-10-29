@@ -1,6 +1,6 @@
 #include "GPUDenseKernels.h"
 
-__global__ void dropout_eltw(float* x, const unsigned size, const float dropout_rate, curandState* rng_state) {
+__global__ void dense_dropout_eltw(float* x, const unsigned size, const float dropout_rate, curandState* rng_state) {
 	const unsigned tid = blockIdx.x * blockDim.x + threadIdx.x;
 	const unsigned num_threads = gridDim.x * blockDim.x;
 	curandState localState = rng_state[tid];
@@ -9,7 +9,7 @@ __global__ void dropout_eltw(float* x, const unsigned size, const float dropout_
 	rng_state[tid] = localState;
 }
 
-__global__ void saltpepper_noise_eltw(float* x, const unsigned size, const float noise_rate, curandState* rng_state) {
+__global__ void dense_saltpepper_noise_eltw(float* x, const unsigned size, const float noise_rate, curandState* rng_state) {
 	const unsigned tid = blockIdx.x * blockDim.x + threadIdx.x;
 	const unsigned num_threads = gridDim.x * blockDim.x;
 	curandState localState = rng_state[tid];
@@ -21,7 +21,7 @@ __global__ void saltpepper_noise_eltw(float* x, const unsigned size, const float
 
 }
 
-__global__ void gauss_noise_eltw(float* x, const unsigned size, const float noise_rate, curandState* rng_state) {
+__global__ void dense_gauss_noise_eltw(float* x, const unsigned size, const float noise_rate, curandState* rng_state) {
 	const unsigned tid = blockIdx.x * blockDim.x + threadIdx.x;
 	const unsigned num_threads = gridDim.x * blockDim.x;
 	curandState localState = rng_state[tid];
@@ -31,7 +31,7 @@ __global__ void gauss_noise_eltw(float* x, const unsigned size, const float nois
 
 }
 
-__global__ void col_variance_kernel(const float* X, float* var, const unsigned nrows, const unsigned ncols) {
+__global__ void dense_col_variance_kernel(const float* X, float* var, const unsigned nrows, const unsigned ncols) {
 	const unsigned tid = blockIdx.x * blockDim.x + threadIdx.x;
 	const unsigned num_threads = blockDim.x * gridDim.x;
 	for (unsigned i = tid; i < ncols; i += num_threads) {
@@ -49,7 +49,7 @@ __global__ void col_variance_kernel(const float* X, float* var, const unsigned n
 	}
 }
 
-__global__ void scale_columns_kernel(float* X, float* a, const unsigned nrows, const unsigned ncols) {
+__global__ void dense_scale_columns_kernel(float* X, float* a, const unsigned nrows, const unsigned ncols) {
 	const unsigned tid = blockIdx.x * blockDim.x + threadIdx.x;
 	const unsigned num_threads = blockDim.x * gridDim.x;
 	for (unsigned i = tid; i < ncols * nrows; i += num_threads) {
@@ -57,7 +57,7 @@ __global__ void scale_columns_kernel(float* X, float* a, const unsigned nrows, c
 	}
 }
 
-__global__ void scale_rows_kernel(float* X, float* a, const unsigned nrows, const unsigned ncols) {
+__global__ void dense_scale_rows_kernel(float* X, float* a, const unsigned nrows, const unsigned ncols) {
 	const unsigned tid = blockIdx.x * blockDim.x + threadIdx.x;
 	const unsigned num_threads = blockDim.x * gridDim.x;
 	for (unsigned i = tid; i < ncols * nrows; i += num_threads) {
