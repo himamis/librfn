@@ -28,20 +28,12 @@ public:
 		return dst;
 	}
 
-	void fill_eye(float* X, unsigned n) const;
-	void maximum(float* x, const float value, const unsigned size) const;
-	void leaky_relu(float* x, const float value, const unsigned size) const;
-	void tanh(float* x, const unsigned size) const;
-	void sigmoid(float* x, const unsigned size) const;
-	void soft_threshold(float* x, const float alpha, const unsigned size) const;
 	void calculate_column_variance(float* X, const unsigned nrows, const unsigned ncols, float* variances) const;
-	void invsqrt(float* s, const unsigned n) const;
 	void scale_columns(float* X, const unsigned nrows, const unsigned ncols, float* s) const;
 	void scale_rows(float* X, const unsigned nrows, const unsigned ncols, float* s) const;
 	void dropout(float* X, const unsigned size, const float dropout_rate) const;
 	void add_saltpepper_noise(float* X, const unsigned size, const float noise_rate) const;
 	void add_gauss_noise(float* X, const unsigned size, const float noise_rate) const;
-	void invert(float* X, const unsigned size) const;
 
 	// Useful for debugging
 	void printMatrixCM(const float* a, int n, int m, const char* fmt);

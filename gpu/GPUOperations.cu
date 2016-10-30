@@ -141,3 +141,6 @@ void GPUOperations<MatrixType>::invsqrt(float* s, const unsigned n) const {
 	get_grid_sizes(n, &t, &b);
 	invsqrt_eltw<<<t, b>>>(s, n);
 }
+
+// force compiler to create this file
+template class GPUOperations<float*>;
