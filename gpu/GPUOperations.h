@@ -14,7 +14,6 @@ class GPUOperations {
 	cublasHandle_t handle;
 	cusolverDnHandle_t cudense_handle;
 
-
 	std::map<int, float*> buffer_map; // keeps track of buffers allocated for potrf
 	int* devinfo; // cuSOLVER error reporting
 
@@ -48,6 +47,19 @@ public:
 	void free(void* ptr) const;
 	void free_devicememory(void* ptr) const;
 	float* malloc(size_t size) const;
+
+	float* to_device(const float* src, size_t size) const;
+
+	float* to_host(float* src, float* dst, size_t size) const {
+		CUDA_CALL(cudaMemcpy(dst, src, size, cudaMemcpyDeviceToHost));
+		free(src);
+		return dst;
+	}
+
+	float* copy_to_host(const float* src, float* dst, size_t size) const {
+		CUDA_CALL(cudaMemcpy(dst, src, size, cudaMemcpyDeviceToHost));
+		return dst;
+	}
 
 	void gemm(const char *transa, const char *transb, const int m, const int n, const int k, const float alpha,
 			const float *a, const int lda, const float *b, const int ldb, const float beta, float *c,

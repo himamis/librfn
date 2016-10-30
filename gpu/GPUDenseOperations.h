@@ -15,19 +15,6 @@ public:
 	GPUDenseOperations(int n, int m, int k, unsigned long seed, int gpu_id);
 	virtual ~GPUDenseOperations();
 
-	float* to_device(const float* src, size_t size) const;
-
-	float* to_host(float* src, float* dst, size_t size) const {
-		CUDA_CALL(cudaMemcpy(dst, src, size, cudaMemcpyDeviceToHost));
-		free(src);
-		return dst;
-	}
-
-	float* copy_to_host(const float* src, float* dst, size_t size) const {
-		CUDA_CALL(cudaMemcpy(dst, src, size, cudaMemcpyDeviceToHost));
-		return dst;
-	}
-
 	void calculate_column_variance(float* X, const unsigned nrows, const unsigned ncols, float* variances) const;
 	void scale_columns(float* X, const unsigned nrows, const unsigned ncols, float* s) const;
 	void scale_rows(float* X, const unsigned nrows, const unsigned ncols, float* s) const;

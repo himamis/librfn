@@ -7,15 +7,10 @@
 #include "GPUDenseKernels.h"
 
 GPUDenseOperations::GPUDenseOperations(const int n, const int m, const int k, unsigned long seed, int gpu_id) :
-		GPUOperations(n, m, k, seed, gpu_id) { }
+		GPUOperations(n, m, k, seed, gpu_id) {
+}
 
-GPUDenseOperations::~GPUDenseOperations() { }
-
-float* GPUDenseOperations::to_device(const float* src, size_t size) const {
-	float* dst = 0;
-	CUDA_CALL(cudaMalloc(&dst, size));
-	CUDA_CALL(cudaMemcpy(dst, src, size, cudaMemcpyHostToDevice));
-	return dst;
+GPUDenseOperations::~GPUDenseOperations() {
 }
 
 void GPUDenseOperations::dropout(float* X, const unsigned size, const float dropout_rate) const {

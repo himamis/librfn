@@ -39,6 +39,14 @@ GPUOperations<MatrixType>::~GPUOperations() {
 }
 
 template<typename MatrixType>
+float* GPUOperations<MatrixType>::to_device(const float* src, size_t size) const {
+	float* dst = 0;
+	CUDA_CALL(cudaMalloc(&dst, size));
+	CUDA_CALL(cudaMemcpy(dst, src, size, cudaMemcpyHostToDevice));
+	return dst;
+}
+
+template<typename MatrixType>
 void* GPUOperations<MatrixType>::memset(void* dest, int ch, size_t count) const {
 	CUDA_CALL(cudaMemset(dest, ch, count));
 	return dest;

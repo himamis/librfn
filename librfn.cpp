@@ -59,7 +59,7 @@ int calculate_W_impl_invertKxK(OP& op, const float* W, const float* Pinv, float*
 }
 
 // if isMoreHiddensThanFeatures is true, we will calculate the m*m inverse, otherwise the k*k one
-template<class OP, bool isMoreHiddensThanFeatures>
+template<class OP, bool isMoreHiddensThanFeatures, typename MatrixType>
 int train(const float* X_host, float* W_host, float* P_host, const int n, const int m, const int k, const int n_iter,
 		int batch_size, const float etaW, const float etaP, const float minP, const float h_threshold,
 		const float dropout_rate, const float input_noise_rate, const float l2_weightdecay, const float l1_weightdecay,
