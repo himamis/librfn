@@ -21,6 +21,7 @@ public:
 	void add_saltpepper_noise(sparse_matrix_csr X, const unsigned size, const float noise_rate) const;
 	void add_gauss_noise(sparse_matrix_csr X, const unsigned size, const float noise_rate) const;
 
+	sparse_matrix_csr dense_to_sparse_csr(const float *X, const unsigned nrows, const unsigned ncols) const;
 };
 
 #endif

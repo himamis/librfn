@@ -1,5 +1,6 @@
 #include "GPUOperations.h"
 #include "GPUCommonKernels.h"
+#include "SparseMatrix.h"
 
 template<typename MatrixType>
 GPUOperations<MatrixType>::GPUOperations(const int n, const int m, const int k, unsigned long seed, int gpu_id) {
@@ -144,4 +145,4 @@ void GPUOperations<MatrixType>::invsqrt(float* s, const unsigned n) const {
 
 // force compiler to create related class
 template class GPUOperations<float*>;
-template class GPUOperations<cusparseMatDescr_t>;
+template class GPUOperations<sparse_matrix_csr>;

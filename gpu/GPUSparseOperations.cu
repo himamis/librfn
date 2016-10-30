@@ -50,3 +50,11 @@ void GPUSparseOperations::add_gauss_noise(sparse_matrix_csr X, const unsigned si
 	gauss_noise_eltw<<<RNG_BLOCKS, RNG_THREADS>>>(X.values, X.nnz, noise_rate, rng_state);
 	assert(!cudaGetLastError());
 }
+
+sparse_matrix_csr GPUSparseOperations::dense_to_sparse_csr(const float* X, const unsigned nrows, const unsigned ncols) const {
+	sparse_matrix_csr sparse;
+
+
+
+	return sparse;
+}
