@@ -3,8 +3,9 @@
 
 #include "GPUOperations.h"
 #include "GPUCommon.h"
+#include "SparseMatrix.h"
 
-class GPUSparseOperations: public GPUOperations<cusparseMatDescr_t> {
+class GPUSparseOperations: public GPUOperations<sparse_matrix_csr> {
 
 	cusparseHandle_t sparseHandle;
 
@@ -13,12 +14,12 @@ public:
 	GPUSparseOperations(int n, int m, int k, unsigned long seed, int gpu_id);
 	~GPUSparseOperations();
 
-	void calculate_column_variance(cusparseMatDescr_t X, const unsigned nrows, const unsigned ncols, float* variances) const;
-	void scale_columns(cusparseMatDescr_t X, const unsigned nrows, const unsigned ncols, float* s) const;
-	void scale_rows(cusparseMatDescr_t X, const unsigned nrows, const unsigned ncols, float* s) const;
-	void dropout(cusparseMatDescr_t X, const unsigned size, const float dropout_rate) const;
-	void add_saltpepper_noise(cusparseMatDescr_t X, const unsigned size, const float noise_rate) const;
-	void add_gauss_noise(cusparseMatDescr_t X, const unsigned size, const float noise_rate) const;
+	void calculate_column_variance(sparse_matrix_csr X, const unsigned nrows, const unsigned ncols, float* variances) const;
+	void scale_columns(sparse_matrix_csr X, const unsigned nrows, const unsigned ncols, float* s) const;
+	void scale_rows(sparse_matrix_csr X, const unsigned nrows, const unsigned ncols, float* s) const;
+	void dropout(sparse_matrix_csr X, const unsigned size, const float dropout_rate) const;
+	void add_saltpepper_noise(sparse_matrix_csr X, const unsigned size, const float noise_rate) const;
+	void add_gauss_noise(sparse_matrix_csr X, const unsigned size, const float noise_rate) const;
 
 };
 

@@ -1,5 +1,37 @@
 #include "GPUCommonKernels.h"
 
+__global__ void dropout_eltw(float* x, const unsigned size, const float dropout_rate, curandState* rng_state) {
+	const unsigned tid = blockIdx.x * blockDim.x + threadIdx.x;
+	const unsigned num_threads = gridDim.x * blockDim.x;
+	curandState localState = rng_state[tid];
+	for (unsigned i = tid; i < size; i += num_threads)
+		x[i] = (curand_uniform(&localState) < dropout_rate) ? 0.0 : x[i];
+	rng_state[tid] = localState;
+}
+
+__global__ void saltpepper_noise_eltw(float* x, const unsigned size, const float noise_rate,
+		curandState* rng_state) {
+	const unsigned tid = blockIdx.x * blockDim.x + threadIdx.x;
+	const unsigned num_threads = gridDim.x * blockDim.x;
+	curandState localState = rng_state[tid];
+	for (unsigned i = tid; i < size; i += num_threads)
+		if (curand_uniform(&localState) < noise_rate) {
+			x[i] = (curand_uniform(&localState) < 0.5f) ? 0.0f : 1.0f;
+		}
+	rng_state[tid] = localState;
+
+}
+
+__global__ void gauss_noise_eltw(float* x, const unsigned size, const float noise_rate, curandState* rng_state) {
+	const unsigned tid = blockIdx.x * blockDim.x + threadIdx.x;
+	const unsigned num_threads = gridDim.x * blockDim.x;
+	curandState localState = rng_state[tid];
+	for (unsigned i = tid; i < size; i += num_threads)
+		x[i] += curand_normal(&localState) * noise_rate;
+	rng_state[tid] = localState;
+
+}
+
 __global__ void setup_rng(curandState* rng_state, unsigned long seed) {
 	const int tid = blockIdx.x * blockDim.x + threadIdx.x;
 	curand_init(seed, tid, 0, &rng_state[tid]);

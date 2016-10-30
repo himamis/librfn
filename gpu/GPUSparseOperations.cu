@@ -16,27 +16,37 @@ GPUSparseOperations::~GPUSparseOperations() {
 	CUSPARSE_CALL(cusparseDestroy(sparseHandle));
 }
 
-void GPUSparseOperations::calculate_column_variance(cusparseMatDescr_t X, const unsigned nrows, const unsigned ncols,
-			float* variances) const {
-
+void GPUSparseOperations::calculate_column_variance(sparse_matrix_csr X, const unsigned nrows, const unsigned ncols,
+		float* variances) const {
+	int threads, blocks;
+	get_grid_sizes(ncols, &threads, &blocks);
+	sparse_col_variance_kernel<<<threads, blocks>>>(X, variances, nrows, ncols);
 }
 
-void GPUSparseOperations::scale_columns(cusparseMatDescr_t X, const unsigned nrows, const unsigned ncols, float* s) const {
-
+void GPUSparseOperations::scale_columns(sparse_matrix_csr X, const unsigned nrows, const unsigned ncols,
+		float* s) const {
+	int threads, blocks;
+	get_grid_sizes(X.nnz, &threads, &blocks);
+	sparse_scale_columns_kernel<<<threads, blocks>>>(X, s, nrows, ncols);
 }
 
-void GPUSparseOperations::scale_rows(cusparseMatDescr_t X, const unsigned nrows, const unsigned ncols, float* s) const {
-
+void GPUSparseOperations::scale_rows(sparse_matrix_csr X, const unsigned nrows, const unsigned ncols, float* s) const {
+	int threads, blocks;
+	get_grid_sizes(X.nnz, &threads, &blocks);
+	sparse_scale_rows_kernel<<<threads, blocks>>>(X, s, nrows, ncols);
 }
 
-void GPUSparseOperations::dropout(cusparseMatDescr_t X, const unsigned size, const float dropout_rate) const {
-
+void GPUSparseOperations::dropout(sparse_matrix_csr X, const unsigned size, const float dropout_rate) const {
+	dropout_eltw<<<RNG_BLOCKS, RNG_THREADS>>>(X.values, X.nnz, dropout_rate, rng_state);
+	assert(!cudaGetLastError());
 }
 
-void GPUSparseOperations::add_saltpepper_noise(cusparseMatDescr_t X, const unsigned size, const float noise_rate) const {
-
+void GPUSparseOperations::add_saltpepper_noise(sparse_matrix_csr X, const unsigned size, const float noise_rate) const {
+	saltpepper_noise_eltw<<<RNG_BLOCKS, RNG_THREADS>>>(X.values, X.nnz, noise_rate, rng_state);
+	assert(!cudaGetLastError());
 }
 
-void GPUSparseOperations::add_gauss_noise(cusparseMatDescr_t X, const unsigned size, const float noise_rate) const {
-
+void GPUSparseOperations::add_gauss_noise(sparse_matrix_csr X, const unsigned size, const float noise_rate) const {
+	gauss_noise_eltw<<<RNG_BLOCKS, RNG_THREADS>>>(X.values, X.nnz, noise_rate, rng_state);
+	assert(!cudaGetLastError());
 }

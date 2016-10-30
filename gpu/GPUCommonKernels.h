@@ -3,6 +3,12 @@
 
 #include <curand_kernel.h>
 
+__global__ void dropout_eltw(float* x, const unsigned size, const float dropout_rate, curandState* rng_state);
+
+__global__ void saltpepper_noise_eltw(float* x, const unsigned size, const float noise_rate, curandState* rng_state);
+
+__global__ void gauss_noise_eltw(float* x, const unsigned size, const float noise_rate, curandState* rng_state);
+
 __global__ void setup_rng(curandState* rng_state, unsigned long seed);
 
 __global__ void invsqrt_eltw(float* x, const unsigned k);

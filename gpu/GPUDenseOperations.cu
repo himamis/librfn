@@ -19,17 +19,17 @@ float* GPUDenseOperations::to_device(const float* src, size_t size) const {
 }
 
 void GPUDenseOperations::dropout(float* X, const unsigned size, const float dropout_rate) const {
-	dense_dropout_eltw<<<RNG_BLOCKS, RNG_THREADS>>>(X, size, dropout_rate, rng_state);
+	dropout_eltw<<<RNG_BLOCKS, RNG_THREADS>>>(X, size, dropout_rate, rng_state);
 	assert(!cudaGetLastError());
 }
 
 void GPUDenseOperations::add_gauss_noise(float* X, const unsigned size, const float noise_rate) const {
-	dense_gauss_noise_eltw<<<RNG_BLOCKS, RNG_THREADS>>>(X, size, noise_rate, rng_state);
+	gauss_noise_eltw<<<RNG_BLOCKS, RNG_THREADS>>>(X, size, noise_rate, rng_state);
 	assert(!cudaGetLastError());
 }
 
 void GPUDenseOperations::add_saltpepper_noise(float* X, const unsigned size, const float noise_rate) const {
-	dense_saltpepper_noise_eltw<<<RNG_BLOCKS, RNG_THREADS>>>(X, size, noise_rate, rng_state);
+	saltpepper_noise_eltw<<<RNG_BLOCKS, RNG_THREADS>>>(X, size, noise_rate, rng_state);
 	assert(!cudaGetLastError());
 }
 
