@@ -51,10 +51,49 @@ void GPUSparseOperations::add_gauss_noise(sparse_matrix_csr X, const unsigned si
 	assert(!cudaGetLastError());
 }
 
-sparse_matrix_csr GPUSparseOperations::dense_to_sparse_csr(const float* X, const unsigned nrows, const unsigned ncols) const {
+sparse_matrix_csr GPUSparseOperations::dense_to_sparse_csr(const float* X, const unsigned nrows,
+		const unsigned ncols) const {
 	sparse_matrix_csr sparse;
+	size_t size = nrows * ncols * sizeof(float);
+	float *X_host = std::malloc(size);
+	to_host(X, X_host, size);
 
+	const float eps = 1e-5;
 
+	for (unsigned i = 0; i < nrows * ncols; ++i) {
+		if (!isNearlyZero(X_host[i])) {
+			sparse.nnz += 1;
+		}
+	}
+	sparse.m = nrows;
+
+	float *sp_values = std::malloc(sparse.nnz * sizeof(float));
+	float *sp_column_indices = std::malloc(sparse.nnz * sizeof(float));
+	float *sp_index_pointers = std::malloc((nrows + 1) * sizeof(float));
+
+	sp_index_pointers[0] = 0;
+
+	unsigned index = 0;
+	for (unsigned i = 0; i < nrows; ++i) {
+		sp_index_pointers[i + 1] = sp_index_pointers[i];
+		for (unsigned j = 0; j < ncols; ++j) {
+			float value = X_host[i * ncols + j];
+			if (!isNearlyZero(value)) {
+				sp_values[index] = value;
+				sp_column_indices[index] = j;
+				sp_index_pointers[i + 1] += 1;
+			}
+		}
+	}
+
+	sparse.values = to_device(sp_values, sparse.nnz * sizeof(float));
+	sparse.index_pointers = to_device(sp_index_pointers, (nrows + 1) * sizeof(float));
+	sparse.column_indices = to_device(sp_column_indices, sparse.nnz * sizeof(float));
 
 	return sparse;
+}
+
+bool isNearlyZero(float x) {
+	const float epsilon = 1e-5;
+	return std::abs(x) <= epsilon;
 }
